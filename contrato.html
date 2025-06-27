@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrato Profesional Interactivo - Versión Definitiva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" xintegrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rojo-claro: #ef4444;
+            --gris-texto: #374151;
+            --gris-borde: #d1d5db;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        #contrato-container {
+            font-size: 14px;
+        }
+        .form-input-line {
+            border: none;
+            border-bottom: 1px solid var(--gris-borde);
+            border-radius: 0;
+            padding: 0.25rem;
+            background-color: transparent;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+        .form-input-line:focus {
+            outline: none;
+            border-bottom-color: var(--rojo-claro);
+        }
+        .custom-checkbox {
+            appearance: none;
+            background-color: #fff;
+            border: 1px solid var(--gris-borde);
+            width: 1.15rem;
+            height: 1.15rem;
+            border-radius: 0.25rem;
+            display: inline-block;
+            position: relative;
+            vertical-align: middle;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .custom-checkbox:checked {
+            background-color: var(--rojo-claro);
+            border-color: var(--rojo-claro);
+        }
+        .custom-checkbox:checked::after {
+            content: '✔';
+            font-size: 0.75rem;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .section-header {
+            background-color: #e5e7eb;
+            color: var(--gris-texto);
+            padding: 0.5rem 1rem;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 0.375rem;
+            margin: 2.5rem 0 1.5rem 0;
+        }
+        .anexo-header {
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--gris-texto);
+            margin-bottom: 1rem;
+        }
+        .anexo-section-title {
+            text-align: center;
+            font-weight: 700;
+            color: var(--gris-texto);
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 0.25rem 0;
+            margin: 1.5rem 0;
+        }
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #3b82f6;
+            color: white;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+        .action-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .export-button {
+            background-color: #16a34a;
+        }
+        .export-button:hover {
+            background-color: #15803d;
+        }
+        .delete-btn {
+            color: #9ca3af;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .delete-btn:hover {
+            color: var(--rojo-claro);
+        }
+        .editable-table thead th {
+            font-weight: 600;
+            text-align: center;
+            background-color: var(--rojo-claro);
+            color: white;
+            padding: 0.75rem;
+        }
+        .editable-table td {
+            border: 1px solid var(--gris-borde);
+            padding: 0.5rem;
+            position: relative;
+        }
+        .editable-table td[contenteditable="true"]:focus {
+            background-color: #fee2e2;
+            outline: 2px solid var(--rojo-claro);
+            z-index: 10;
+        }
+        .page-break {
+            page-break-before: always;
+            border: none;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body, #contrato-container {
+                background-color: #fff !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="mb-6 text-right no-print">
+            <button id="export-pdf-btn" class="action-button export-button">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 00-1 1v5.586l-1.293-1.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 8.586V3a1 1 0 00-1-1z" /><path d="M3 13.5a1.5 1.5 0 001.5 1.5h11a1.5 1.5 0 001.5-1.5v-3a1.5 1.5 0 00-3 0V12a1 1 0 11-2 0v-1.5a1.5 1.5 0 00-3 0V12a1 1 0 11-2 0v-1.5a1.5 1.5 0 00-3 0v3z" /></svg>
+                Exportar a PDF
+            </button>
+        </div>
+        
+        <main id="contrato-container" class="bg-white p-6 sm:p-10 rounded-xl shadow-2xl">
+
+            <section class="mb-10">
+                <h2 class="text-xl font-extrabold text-gray-800 border-b-2 border-red-500 pb-2 mb-4">CASO PRÁCTICO</h2>
+                <div contenteditable="true" class="w-full min-h-[120px] p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-red-300" placeholder="Describe aquí la situación o los datos del cliente que vas a registrar...">
+                </div>
+            </section>
+
+            <header class="flex flex-col sm:flex-row justify-between items-start pb-4 border-b-2 border-gray-100 mb-8">
+                <h1 class="text-xl font-extrabold text-gray-800 w-full sm:w-2/3 mb-4 sm:mb-0">CONTRATO DE SERVICIOS DE TELECOMUNICACIONES</h1>
+                <div class="text-left sm:text-right flex-shrink-0 w-full sm:w-auto">
+                    <img src="https://www.claro.com.ni/wp-content/themes/claro-home/images/logo-claro.svg" alt="Logo Claro" class="h-8 sm:ml-auto">
+                    <p class="text-xs text-gray-500 mt-1">Claro que sí</p>
+                    <div class="flex items-center gap-2 mt-4">
+                        <label for="contract-no" class="font-bold">Nº</label>
+                        <input type="text" id="contract-no" value="08552" class="w-24 p-2 border border-gray-300 rounded-md text-center font-semibold">
+                    </div>
+                </div>
+            </header>
+
+            <section class="mb-6 text-gray-700">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-28 mb-1 sm:mb-0">No. Solicitud:</label><input type="text" class="form-input-line flex-1"></div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-36 mb-1 sm:mb-0">Ejec./canal de venta:</label><input type="text" class="form-input-line flex-1"></div>
+                    <div class="hidden md:block"></div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-12 mb-1 sm:mb-0">Fecha:</label><input type="date" class="form-input-line flex-1"></div>
+                </div>
+                <p class="my-4 p-4 bg-gray-50 rounded-lg">El (la) suscrito (a) <input type="text" class="form-input-line inline-block w-full"> en representación de ENITEL, y Nombre Completo o Razón Social <input type="text" class="form-input-line inline-block w-full"> en adelante "EL CLIENTE".</p>
+                <div class="grid grid-cols-1 gap-y-4">
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-52 mb-1 sm:mb-0">Nombre del Representante de EL CLIENTE:</label><input type="text" class="form-input-line flex-1"></div>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                        <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-28 mb-1 sm:mb-0">Identificación:</label><input type="text" class="form-input-line flex-1"></div>
+                        <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-28 mb-1 sm:mb-0">No. Cliente:</label><input type="text" class="form-input-line flex-1"></div>
+                        <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-36 mb-1 sm:mb-0">Teléfono de contacto:</label><input type="tel" class="form-input-line flex-1"></div>
+                        <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-28 mb-1 sm:mb-0">Celular:</label><input type="tel" class="form-input-line flex-1"></div>
+                     </div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-28 mb-1 sm:mb-0">Email:</label><input type="email" class="form-input-line flex-1"></div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-28 mb-1 sm:mb-0">Municipio:</label><input type="text" class="form-input-line flex-1"></div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-44 mb-1 sm:mb-0">Dirección de Facturación: Física:</label><input type="text" class="form-input-line flex-1"></div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-44 mb-1 sm:mb-0">Electrónica:</label><input type="text" class="form-input-line flex-1"></div>
+                    <div class="field-group flex flex-col sm:flex-row sm:items-center"><label class="w-full sm:w-44 mb-1 sm:mb-0">Dirección de Instalación:</label><input type="text" class="form-input-line flex-1"></div>
+                </div>
+                <p class="mt-4">Convienen en suscribir el presente contrato de servicios de telecomunicaciones:</p>
+            </section>
+            
+            <div class="page-break"></div>
+
+            <div class="section-header">I. SERVICIOS CONTRATADOS</div>
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-x-8 mb-6">
+                <div class="space-y-4">
+                    <div><label class="font-bold">Telefonía Básica:</label><input type="text" class="form-input-line w-full"></div>
+                    <div><label class="font-bold">Televisión por Suscripción:</label><input type="text" class="form-input-line w-full"></div>
+                    <div><label class="font-bold">Acceso a Internet Fijo</label><br><label class="ml-2">Velocidad hasta:</label><input type="text" class="form-input-line w-full"></div>
+                    <div><label class="font-bold">Acceso a Internet Móvil</label><br><label class="ml-2">Cantidad de descarga:</label><input type="text" class="form-input-line w-full"><p class="text-xs text-gray-500 ml-2">(Para servicios de internet móviles la velocidad está sujeta a la red)</p></div>
+                </div>
+                 <div class="space-y-4 mt-4 md:mt-0">
+                    <div><label class="font-bold">Telefonía Móvil Celular:</label><br><label class="ml-2">Plan:</label><input type="text" class="form-input-line w-full"><label class="ml-2 mt-2 inline-block">Roaming:</label><input type="text" class="form-input-line w-full"></div>
+                    <div><label class="font-bold">Televisión Satelital:</label><input type="text" class="form-input-line w-full"></div>
+                    <div><label class="font-bold">Contrato en modalidad:</label>
+                        <div class="ml-2 mt-2 space-y-2">
+                            <p>a. Servicios en Combo</p>
+                            <div class="flex items-center space-x-4 ml-4"><label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Doble</label><label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Triple</label><label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Cuadruple</label></div>
+                            <div class="ml-4 flex items-center gap-4">Servicios en Combo: 
+                                <label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">LF</label>
+                                <label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">TV</label>
+                                <label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">AI</label>
+                            </div>
+                            <p class="ml-4 flex items-center gap-2">Otro: <input type="text" class="form-input-line w-3/4"></p>
+                            <p>b. <label class="ml-2 flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Domiciliar</label><label class="ml-4 flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Empresarial</label></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="mb-6">
+                <div class="border rounded-lg p-3">
+                    <label class="font-bold">Servicios de valor agregado:</label>
+                    <div class="mt-2 h-20" contenteditable="true"></div>
+                </div>
+            </section>
+            
+            <section class="mb-6">
+                 <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table id="servicios-table" class="w-full editable-table">
+                        <thead>
+                            <tr><th>Servicio</th><th>Costo</th><th>Vigencia</th><th class="w-12 no-print"></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                        </tbody>
+                    </table>
+                 </div>
+                 <button onclick="addRow('servicios-table')" class="action-button mt-4 text-xs no-print">Añadir Fila</button>
+            </section>
+
+            <div class="page-break"></div>
+            
+            <div class="section-header">II. EQUIPOS</div>
+            <section class="mb-6 space-y-4">
+                <div class="flex items-center space-x-8"><label class="font-bold">Equipo entregado en calidad de</label><label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Comodato</label><label class="flex items-center gap-2"><input type="checkbox" class="custom-checkbox">Otro</label></div>
+                <div><label class="font-bold w-32 inline-block">Valor del Equipo:</label><input type="text" class="form-input-line w-full md:w-3/4"></div>
+                <div class="border rounded-lg p-3 mt-2"><label class="font-bold">Especificación:</label><div class="mt-2 h-24" contenteditable="true"></div></div>
+                <div class="border rounded-lg p-3 mt-2"><label class="font-bold">Equipo asociado al servicio:</label><div class="mt-2 h-32" contenteditable="true"></div></div>
+            </section>
+
+            <div class="section-header">III. TARIFAS Y CARGO</div>
+             <section class="mb-6">
+                <div class="overflow-x-auto rounded-lg shadow-sm border border-gray-200">
+                    <table id="tarifas-table" class="w-full editable-table">
+                        <thead>
+                            <tr><th>Servicios</th><th>Tarifas (US$) antes de IVA</th><th>Forma de Pago (Única o mensual)</th><th class="w-12 no-print"></th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="bg-gray-50 font-medium">Servicios contratados</td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center bg-gray-50 no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td class="bg-gray-50 font-medium">Servicios en combo</td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center bg-gray-50 no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td class="bg-gray-50 font-medium">Servicios de valor agregado</td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center bg-gray-50 no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td class="bg-gray-50 font-medium">Instalación / activación</td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center bg-gray-50 no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td class="bg-gray-50 font-medium">Equipos (prima)</td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center bg-gray-50 no-print"><span class="delete-btn" onclick="deleteRow(this)">&times;</span></td></tr>
+                            <tr><td class="bg-gray-50 font-medium">Equipos (mensualidad)</td><td contenteditable="true"></td><td contenteditable="true"></td><td class="text-center bg-gray-50 no-print"><span class="delete-btn" onclick="deleteRo
